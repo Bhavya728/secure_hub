@@ -3,6 +3,9 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import { PERMISSIONS } from "../constants/permissions.js";
 import { logAudit } from "../utils/auditLogger.js";
+import { generateOtp } from "../utils/generateOtp.js";
+import { sendEmail } from "../utils/sendEmail.js";
+
 
 /* ------------------ Helpers ------------------ */
 const generateRefreshToken = (userId) => {
@@ -26,18 +29,52 @@ export const register = async (req, res) => {
 
     const hashed = await bcrypt.hash(password, 10);
 
-    await User.create({
+    const user=await User.create({
       name,
       email,
       password: hashed,
       role: "user",
       permissions: [PERMISSIONS.VIEW_USER] // Default permission
     });
+    const otp = generateOtp();
 
-    res.status(201).json({ message: "User registered successfully" });
+user.emailOtp = otp;
+user.emailOtpExpires = Date.now() + 10 * 60 * 1000; // 10 minutes
+await user.save();
+
+await sendEmail({
+  to: user.email,
+  subject: "Verify your email",
+  text: `Your verification OTP is ${otp}`
+});
+
+    res.status(201).json({ message: "Registration successful. Verify your email" });
   } catch (err) {
+    console.error("Registration error:", err);
     res.status(500).json({ message: "Registration failed" });
   }
+};
+/* ------------------ Verify Email ------------------ */
+export const verifyEmail = async (req, res) => {
+  const { email, otp } = req.body;
+
+  const user = await User.findOne({
+    email,
+    emailOtp: otp,
+    emailOtpExpires: { $gt: Date.now() }
+  });
+
+  if (!user) {
+    return res.status(400).json({ message: "Invalid or expired OTP" });
+  }
+
+  user.isVerified = true;
+  user.emailOtp = null;
+  user.emailOtpExpires = null;
+
+  await user.save();
+
+  res.json({ message: "Email verified successfully" });
 };
 
 const MAX_FAILED_ATTEMPTS = 10;
@@ -67,7 +104,11 @@ export const login = async (req, res) => {
         message: "Account locked. Try again later."
       });
     }
-
+     if (!user.isVerified) {
+      return res.status(403).json({
+        message: "Please verify your email before logging in"
+      });
+    }
     const isMatch = await bcrypt.compare(password, user.password);
 
     /* ================================

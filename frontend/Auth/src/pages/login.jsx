@@ -12,7 +12,7 @@ export default function Login(){
      //if we used useState it would cause an infinite loop
     useEffect(() => {
         if (user) navigate('/dashboard');
-    }, [user]);
+    }, [user, navigate]);
     const [form , setForm] = useState({
         email: '',
         password: ''
@@ -59,6 +59,16 @@ catch (err) {
             <button type="submit" disabled={loading}>
                 {loading ? "Logging in..." : "Login"}
             </button>
+            <p className="text-sm text-center mt-4">
+  Don’t have an account?{" "}
+  <span
+    className="text-indigo-600 cursor-pointer"
+    onClick={() => navigate("/register")}
+  >
+    Register
+  </span>
+</p>
         </form>
+        
     );
 } 

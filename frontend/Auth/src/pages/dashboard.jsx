@@ -29,39 +29,59 @@ export default function Dashboard() {
         }
     }, [user]);
 
-  return (
-    <div>
-      <h1>Welcome, {user?.name}</h1>
-      <p>Role: {user?.role}</p>
-      
+ return (
+  <div className="min-h-screen bg-gray-100 p-6">
+    <div className="max-w-5xl mx-auto">
 
-      {/* USER DASHQBOARD CONTENT */}
-      {user?.role === "user" && (
+      {/* HEADER */}
+      <div className="flex justify-between items-center bg-white p-4 rounded-xl shadow">
         <div>
-          <h2>User Dashboard</h2>
-          <p>This is the user dashboard content.</p>
-          <ul>
-            <li>View Profile</li>
-            <li>Edit Settings</li>
-            <li>Access User Resources</li>
-          </ul>
+          <h1 className="text-xl font-bold">
+            Welcome, {user?.name}
+          </h1>
+          <p className="text-sm text-gray-500">
+            Role: {user?.role}
+          </p>
         </div>
-      )}
-      
-      {/* ADMIN DASHBOARD CONTENT */}
-      {user?.role === "admin" && (
-        <div>
-          <h2>Admin Dashboard</h2>
-          <p>{adminMessage}</p>
-          <ul>
-            <li>Manage Users</li>
-            <li>View Reports</li>
-            <li>System Settings</li>
-          </ul>
-        </div>
-      )}
 
-      <button onClick={handleLogout}>Logout</button>
+        <button
+          onClick={handleLogout}
+          className="bg-red-500 text-white px-4 py-2 rounded-lg"
+        >
+          Logout
+        </button>
+      </div>
+
+      {/* CONTENT */}
+      <div className="mt-6 bg-white p-6 rounded-xl shadow">
+        {user?.role === "user" && (
+          <>
+            <h2 className="text-lg font-semibold mb-2">
+              User Dashboard
+            </h2>
+            <ul className="list-disc pl-5">
+              <li>View Profile</li>
+              <li>Edit Settings</li>
+              <li>Access Resources</li>
+            </ul>
+          </>
+        )}
+
+        {user?.role === "admin" && (
+          <>
+            <h2 className="text-lg font-semibold mb-2">
+              Admin Dashboard
+            </h2>
+            <p>{adminMessage}</p>
+            <ul className="list-disc pl-5 mt-2">
+              <li>Manage Users</li>
+              <li>View Reports</li>
+              <li>System Settings</li>
+            </ul>
+          </>
+        )}
+      </div>
     </div>
-  );
+  </div>
+);
 }

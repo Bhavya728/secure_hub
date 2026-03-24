@@ -33,7 +33,24 @@ failedLoginAttempts: {
 lockUntil: {
   type: Date,
   default: null
-}
+},
+/* =========================
+       EMAIL VERIFICATION / OTP
+    ========================= */
+    isVerified: {
+      type: Boolean,
+      default: false
+    },
+
+    emailOtp: {
+      type: String,
+      default: null
+    },
+
+    emailOtpExpires: {
+      type: Date,
+      default: null
+    }
 }, {
     timestamps: true
 });

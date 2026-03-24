@@ -7,7 +7,6 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // 🔄 Restore session on refresh
   useEffect(() => {
     const fetchMe = async () => {
       try {
@@ -16,7 +15,7 @@ export const AuthProvider = ({ children }) => {
       } catch {
         setUser(null);
       } finally {
-        setLoading(false); // 🔥 CRITICAL
+        setLoading(false);
       }
     };
 
@@ -42,4 +41,5 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
+// 🔥 THIS LINE IS CRITICAL
 export const useAuth = () => useContext(AuthContext);

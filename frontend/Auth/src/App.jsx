@@ -1,8 +1,11 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/Login";
-import Dashboard from "./pages/Dashboard";
+import Dashboard from "./pages/dashboard";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import { useAuth } from "./context/authContext";
+import VerifyOTP from "./pages/VerifyOTP";
+import Success from "./pages/Success";
+import Register from "./pages/register";
 
 function App() {
   const { user, loading } = useAuth();
@@ -19,7 +22,7 @@ function App() {
         path="/"
         element={<Navigate to={user ? "/dashboard" : "/login"} replace />}
       />
-
+      <Route path="/register" element={<Register />} />
       <Route path="/login" element={<Login />} />
 
       <Route
@@ -30,6 +33,8 @@ function App() {
           </ProtectedRoute>
         }
       />
+      <Route path="/verify-email" element={<VerifyOTP />} />
+      <Route path="/success" element={<Success />} />
     </Routes>
   );
 }

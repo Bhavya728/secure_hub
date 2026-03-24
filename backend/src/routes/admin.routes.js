@@ -5,6 +5,8 @@ import protect from "../middleware/auth.middleware.js";
 import authorize from "../middleware/role.middleware.js";
 import { authorizePermissions } from "../middleware/permission.middleware.js";
 import { logAudit } from "../utils/auditLogger.js";
+import AuditLog from "../models/auditLog.model.js";
+
 import User from "../models/user.model.js";
 import { PERMISSIONS } from "../constants/permissions.js";
 
@@ -178,6 +180,29 @@ router.post(
 
     } catch (err) {
       res.status(500).json({ message: "Failed to unlock user" });
+    }
+  }
+);
+
+/* ================================
+   VIEW AUDIT LOGS (ADMIN)
+================================ */
+router.get(
+  "/audit-logs",
+  protect,
+  authorizePermissions(PERMISSIONS.MANAGE_USERS),
+  async (req, res) => {
+    try {
+      const logs = await AuditLog.find()
+        .populate("actor", "email role")
+        .populate("target", "email")
+        .sort({ createdAt: -1 })
+        .limit(100);
+
+      res.json(logs);
+    } catch (err) {
+      console.error("Audit log fetch error:", err);
+      res.status(500).json({ message: "Failed to fetch audit logs" });
     }
   }
 );
