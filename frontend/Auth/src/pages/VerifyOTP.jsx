@@ -36,13 +36,12 @@ export default function VerifyOTP() {
     }
   };
 
-  const handleSubmit = async (e) => {
+   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
 
     const finalOtp = otp.join("");
 
-    // ✅ SAFETY CHECK
     if (!email) {
       setError("Session expired. Please register again.");
       return;
@@ -54,9 +53,10 @@ export default function VerifyOTP() {
         otp: finalOtp,
       });
 
-      // ✅ SAVE USER
+      // ✅ SAVE USER (now res.data has user)
       login(res.data);
 
+      // ✅ Navigate to dashboard (not login)
       navigate("/dashboard");
     } catch (err) {
       setError(

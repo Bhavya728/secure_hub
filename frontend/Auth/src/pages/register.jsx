@@ -38,61 +38,73 @@ export default function Register() {
 
   return (
     <AuthLayout>
-      <h2 className="text-2xl font-bold mb-6 text-center">
-        Create an account
-      </h2>
+  <div className="space-y-6">
+    <h2 className="text-3xl font-bold text-center text-gray-800">
+      Create Account
+    </h2>
 
-      {error && <Alert severity="error">{error}</Alert>}
+    {error && <Alert severity="error">{error}</Alert>}
 
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4 mt-4">
-        <TextField
-          label="Name"
-          fullWidth
-          required
-          onChange={(e) =>
-            setForm({ ...form, name: e.target.value })
-          }
-        />
+    <form onSubmit={handleSubmit} className="flex flex-col gap-5">
 
-        <TextField
-          label="Email"
-          type="email"
-          fullWidth
-          required
-          onChange={(e) =>
-            setForm({ ...form, email: e.target.value })
-          }
-        />
+      <TextField
+        label="Name"
+        fullWidth
+        required
+        variant="outlined"
+        sx={{ borderRadius: "12px" }}
+        onChange={(e) =>
+          setForm({ ...form, name: e.target.value })
+        }
+      />
 
-        <TextField
-          label="Password"
-          type="password"
-          fullWidth
-          required
-          onChange={(e) =>
-            setForm({ ...form, password: e.target.value })
-          }
-        />
+      <TextField
+        label="Email"
+        type="email"
+        fullWidth
+        required
+        variant="outlined"
+        onChange={(e) =>
+          setForm({ ...form, email: e.target.value })
+        }
+      />
 
-        <Button
-          variant="contained"
-          size="large"
-          type="submit"
-          disabled={loading}
-        >
-          {loading ? <CircularProgress size={24} /> : "Register"}
-        </Button>
-      </form>
+      <TextField
+        label="Password"
+        type="password"
+        fullWidth
+        required
+        variant="outlined"
+        onChange={(e) =>
+          setForm({ ...form, password: e.target.value })
+        }
+      />
 
-      <p className="text-sm text-center mt-4">
-        Already have an account?{" "}
-        <span
-          className="text-indigo-600 cursor-pointer"
-          onClick={() => navigate("/login")}
-        >
-          Login
-        </span>
-      </p>
-    </AuthLayout>
+      <Button
+        variant="contained"
+        size="large"
+        type="submit"
+        disabled={loading}
+        sx={{
+          py: 1.5,
+          borderRadius: "12px",
+          background: "linear-gradient(45deg, #6366f1, #9333ea)",
+        }}
+      >
+        {loading ? <CircularProgress size={24} /> : "Register"}
+      </Button>
+    </form>
+
+    <p className="text-sm text-center text-gray-600">
+      Already have an account?{" "}
+      <span
+        className="text-indigo-600 font-semibold cursor-pointer hover:underline"
+        onClick={() => navigate("/login")}
+      >
+        Login
+      </span>
+    </p>
+  </div>
+</AuthLayout>
   );
 }

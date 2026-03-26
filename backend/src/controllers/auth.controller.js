@@ -72,9 +72,43 @@ export const verifyEmail = async (req, res) => {
   user.emailOtp = null;
   user.emailOtpExpires = null;
 
+  // ✅ Generate tokens
+  const accessToken = jwt.sign(
+    { id: user._id },
+    process.env.JWT_SECRET,
+    { expiresIn: "10m" }
+  );
+
+  const refreshToken = generateRefreshToken(user._id);
+  user.refreshToken = refreshToken;
+
   await user.save();
 
-  res.json({ message: "Email verified successfully" });
+  // ✅ SET COOKIES
+  res.cookie("accessToken", accessToken, {
+    httpOnly: true,
+    sameSite: "lax",
+    secure: false,
+    maxAge: 10 * 60 * 1000
+  });
+
+  res.cookie("refreshToken", refreshToken, {
+    httpOnly: true,
+    sameSite: "lax",
+    secure: false,
+    maxAge: 7 * 24 * 60 * 60 * 1000
+  });
+
+  // ✅ RETURN USER DATA
+  res.json({
+    message: "Email verified successfully",
+    user: {
+      id: user._id,
+      name: user.name,
+      role: user.role,
+      permissions: user.permissions
+    }
+  });
 };
 
 const MAX_FAILED_ATTEMPTS = 10;

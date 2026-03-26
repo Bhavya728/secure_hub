@@ -8,31 +8,29 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchMe = async () => {
-      try {
-        const res = await api.get("/auth/me");
-        setUser(res.data.user);
-      } catch {
-        setUser(null);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const storedUser = localStorage.getItem("user");
 
-    fetchMe();
-  }, []);
+  if (storedUser) {
+    setUser(JSON.parse(storedUser));
+  }
+
+  setLoading(false);
+}, []);
 
   const login = (data) => {
-    setUser(data.user);
-  };
+  setUser(data.user);
+  localStorage.setItem("user", JSON.stringify(data.user));
+};
 
   const logout = async () => {
-    try {
-      await api.post("/auth/logout");
-    } finally {
-      setUser(null);
-    }
-  };
+  try {
+    await api.post("/auth/logout"); // clear cookies from backend
+  } catch (err) {
+    console.log(err);
+  }
+  setUser(null);
+  localStorage.removeItem("user");
+};
 
   return (
     <AuthContext.Provider value={{ user, login, logout, loading }}>

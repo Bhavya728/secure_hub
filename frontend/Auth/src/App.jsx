@@ -7,6 +7,7 @@ import VerifyOTP from "./pages/VerifyOTP";
 import Success from "./pages/Success";
 import Register from "./pages/register";
 
+
 function App() {
   const { user, loading } = useAuth();
 
